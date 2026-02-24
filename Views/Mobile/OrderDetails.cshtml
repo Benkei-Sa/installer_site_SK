@@ -1,0 +1,40 @@
+﻿@model installer_site_SK.Models.Mobile.OrderDetailsViewModel
+@{
+    ViewData["Title"] = "Заказ";
+    Layout = "_MobileLayout";
+}
+
+<a class="btn btn-link px-0" href="/m/orders">← Назад</a>
+
+<h4 class="mb-2">@Model.Title</h4>
+
+@if (!string.IsNullOrWhiteSpace(Model.Description))
+{
+    <p class="text-muted">@Model.Description</p>
+}
+
+<form method="post">
+    @Html.AntiForgeryToken()
+    <div class="text-danger" asp-validation-summary="All"></div>
+
+    <div class="mb-3">
+        <label class="form-label">Статус</label>
+        <select class="form-select" asp-for="Status">
+            <option value="New">Новый</option>
+            <option value="InProgress">В работе</option>
+            <option value="Done">Завершён</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Комментарий</label>
+        <textarea class="form-control" asp-for="WorkerComment" rows="4"></textarea>
+        <span class="text-danger" asp-validation-for="WorkerComment"></span>
+    </div>
+
+    <button class="btn btn-primary w-100" type="submit">Сохранить</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,43 @@
+﻿@model installer_site_SK.Models.Admin.CreateOrderViewModel
+@{
+    ViewData["Title"] = "Создать заказ";
+    Layout = "_AdminLayout";
+}
+
+<h3>Создать заказ</h3>
+
+<form method="post">
+    @Html.AntiForgeryToken()
+    <div class="text-danger" asp-validation-summary="All"></div>
+
+    <div class="mb-3">
+        <label class="form-label">Название</label>
+        <input class="form-control" asp-for="Title" />
+        <span class="text-danger" asp-validation-for="Title"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Описание</label>
+        <textarea class="form-control" asp-for="Description"></textarea>
+        <span class="text-danger" asp-validation-for="Description"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Назначить работнику</label>
+        <select class="form-select" asp-for="AssignedToUserId">
+            <option value="">— выберите —</option>
+            @foreach (var w in Model.Workers)
+            {
+                <option value="@w.Id">@w.Email</option>
+            }
+        </select>
+        <span class="text-danger" asp-validation-for="AssignedToUserId"></span>
+    </div>
+
+    <button class="btn btn-success">Создать</button>
+    <a class="btn btn-secondary" href="/admin">Отмена</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

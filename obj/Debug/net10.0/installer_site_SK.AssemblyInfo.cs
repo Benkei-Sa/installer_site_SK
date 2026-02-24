@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("installer_site_SK")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+39e20a5884a1af4fd54a5dc95fc233234eeb49e2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+029ba48b13f3fd32c300246da125bc041157afba")]
 [assembly: System.Reflection.AssemblyProductAttribute("installer_site_SK")]
 [assembly: System.Reflection.AssemblyTitleAttribute("installer_site_SK")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

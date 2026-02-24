@@ -2,8 +2,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using installer_site_SK.Data;
+using installer_site_SK.Models.Admin;
+using installer_site_SK.Models.Entities;
 
 namespace installer_site_SK.Controllers;
+
+
 
 [Authorize(Roles = "Admin,SuperAdmin")]
 [Route("admin")]
@@ -11,13 +16,15 @@ public class AdminController : Controller
 {
     private readonly UserManager<IdentityUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly AppDbContext _db;
 
-    public AdminController(
-        UserManager<IdentityUser> userManager,
-        RoleManager<IdentityRole> roleManager)
+    public AdminController(UserManager<IdentityUser> userManager,
+                       RoleManager<IdentityRole> roleManager,
+                       AppDbContext db)
     {
         _userManager = userManager;
         _roleManager = roleManager;
+        _db = db;
     }
 
     [HttpGet("")]
@@ -103,6 +110,54 @@ public class AdminController : Controller
         }
 
         await _userManager.AddToRoleAsync(user, model.Role);
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet("create-order")]
+    public async Task<IActionResult> CreateOrder()
+    {
+        var vm = new CreateOrderViewModel();
+
+        foreach (var u in _userManager.Users.ToList())
+        {
+            if (await _userManager.IsInRoleAsync(u, "Worker"))
+                vm.Workers.Add((u.Id, u.Email ?? u.UserName ?? u.Id));
+        }
+
+        return View(vm);
+    }
+
+    [HttpPost("create-order")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CreateOrder(CreateOrderViewModel vm)
+    {
+        // перезагрузим список работников, если вернёмся с ошибкой
+        async Task FillWorkers()
+        {
+            vm.Workers.Clear();
+            foreach (var u in _userManager.Users.ToList())
+                if (await _userManager.IsInRoleAsync(u, "Worker"))
+                    vm.Workers.Add((u.Id, u.Email ?? u.UserName ?? u.Id));
+        }
+
+        if (!ModelState.IsValid)
+        {
+            await FillWorkers();
+            return View(vm);
+        }
+
+        var order = new Order
+        {
+            Title = vm.Title,
+            Description = vm.Description,
+            AssignedToUserId = vm.AssignedToUserId,
+            Status = "New",
+            CreatedAtUtc = DateTime.UtcNow
+        };
+
+        _db.Orders.Add(order);
+        await _db.SaveChangesAsync();
 
         return RedirectToAction(nameof(Index));
     }

@@ -1,5 +1,24 @@
-﻿@{
-    ViewData["Title"] = "Заказы"; Layout = "_MobileLayout";
+﻿@model IEnumerable<installer_site_SK.Models.Entities.Order>
+@{
+    ViewData["Title"] = "Мои заказы";
+    Layout = "_MobileLayout";
 }
-<h4>Заказы</h4>
-<p>Скоро здесь будет список ваших заказов.</p>
+
+<h4 class="mb-3">Мои заказы</h4>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Пока нет назначенных заказов.</div>
+}
+else
+{
+    <div class="list-group">
+        @foreach (var o in Model)
+        {
+            <a class="list-group-item list-group-item-action" href="/m/orders/@o.Id">
+                <div class="fw-semibold">@o.Title</div>
+                <small class="text-muted">Статус: @o.Status</small>
+            </a>
+        }
+    </div>
+}
