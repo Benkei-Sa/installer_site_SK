@@ -3,8 +3,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using installer_site_SK.Data;
-using installer_site_SK.Models.Admin;
 using installer_site_SK.Models.Entities;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace installer_site_SK.Controllers;
 
@@ -160,5 +161,30 @@ public class AdminController : Controller
         await _db.SaveChangesAsync();
 
         return RedirectToAction(nameof(Index));
+    }
+
+
+    [HttpGet("orders")]
+    public async Task<IActionResult> Orders()
+    {
+        var orders = await _db.Orders
+            .OrderByDescending(o => o.CreatedAtUtc)
+            .ToListAsync();
+
+        var userIds = orders.Select(o => o.AssignedToUserId).Distinct().ToList();
+        var users = _userManager.Users.Where(u => userIds.Contains(u.Id)).ToList();
+        var userById = users.ToDictionary(u => u.Id, u => u.Email ?? u.UserName ?? u.Id);
+
+        var vm = orders.Select(o => new OrderListItemViewModel
+        {
+            Id = o.Id,
+            Title = o.Title,
+            Status = o.Status,
+            CreatedAtUtc = o.CreatedAtUtc,
+            WorkerId = o.AssignedToUserId,
+            WorkerEmail = userById.TryGetValue(o.AssignedToUserId, out var email) ? email : o.AssignedToUserId
+        }).ToList();
+
+        return View(vm);
     }
 }

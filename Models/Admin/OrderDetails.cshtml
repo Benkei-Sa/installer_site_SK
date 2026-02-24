@@ -1,0 +1,59 @@
+﻿@model installer_site_SK.Models.Admin.EditOrderViewModel
+@{
+    ViewData["Title"] = $"Заказ #{Model.Id}";
+    Layout = "_AdminLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">Заказ #@Model.Id</h3>
+    <a class="btn btn-outline-secondary" href="/admin/orders">← К списку</a>
+</div>
+
+<form method="post">
+    @Html.AntiForgeryToken()
+    <div class="text-danger" asp-validation-summary="All"></div>
+
+    <div class="mb-3">
+        <label class="form-label">Название</label>
+        <input class="form-control" asp-for="Title" />
+        <span class="text-danger" asp-validation-for="Title"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Описание</label>
+        <textarea class="form-control" asp-for="Description" rows="3"></textarea>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Статус</label>
+            <select class="form-select" asp-for="Status">
+                <option value="New">Новый</option>
+                <option value="InProgress">В работе</option>
+                <option value="Done">Завершён</option>
+            </select>
+        </div>
+
+        <div class="col-md-8 mb-3">
+            <label class="form-label">Назначенный работник</label>
+            <select class="form-select" asp-for="AssignedToUserId">
+                @foreach (var w in Model.Workers)
+                {
+                    <option value="@w.Id">@w.Email</option>
+                }
+            </select>
+            <span class="text-danger" asp-validation-for="AssignedToUserId"></span>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Комментарий работника</label>
+        <textarea class="form-control" asp-for="WorkerComment" rows="4"></textarea>
+    </div>
+
+    <button class="btn btn-primary">Сохранить</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
