@@ -1,0 +1,40 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/admin">Admin</a>
+
+            <div class="ms-auto">
+                <a class="btn btn-sm btn-outline-light me-2" href="/m/orders">Моб. часть</a>
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <form class="d-inline" method="post" action="/Account/Logout">
+                        @Html.AntiForgeryToken()
+                        <button class="btn btn-sm btn-outline-light" type="submit">Выйти</button>
+                    </form>
+                }
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-4">
+        @RenderBody()
+    </main>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

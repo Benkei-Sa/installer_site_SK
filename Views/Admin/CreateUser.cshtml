@@ -1,0 +1,43 @@
+﻿@model installer_site_SK.Models.Admin.CreateUserViewModel
+@{
+    ViewData["Title"] = "Создать пользователя";
+    Layout = "_AdminLayout";
+}
+
+<h3>Создать пользователя</h3>
+
+<form method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label>Email</label>
+        <input class="form-control" asp-for="Email" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label>Пароль</label>
+        <input class="form-control" asp-for="Password" type="password" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label>Роль</label>
+        @using installer_site_SK.Infrastructure
+
+        <select class="form-select" asp-for="Role">
+            <option value="@RoleNames.Worker">@RoleNames.ToRu(RoleNames.Worker)</option>
+
+            @if (User.IsInRole(RoleNames.SuperAdmin))
+            {
+                <option value="@RoleNames.Admin">@RoleNames.ToRu(RoleNames.Admin)</option>
+            }
+        </select>
+    </div>
+
+    <button class="btn btn-success">Создать</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
